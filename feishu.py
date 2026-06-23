@@ -95,6 +95,54 @@ def video_to_record(video: dict, account_name: str) -> dict:
     }
 
 
+def clean_old_records(config: dict, days: int = 3):
+    """删除飞书中超过指定天数的旧记录"""
+    feishu = config.get("feishu", {})
+    if not feishu.get("app_id"):
+        return
+
+    bitable = FeishuBitable(
+        app_id=feishu["app_id"],
+        app_secret=feishu["app_secret"],
+        app_token=feishu["app_token"],
+        table_id=feishu["table_id"],
+    )
+
+    cutoff = int((time.time() - days * 86400) * 1000)
+
+    try:
+        headers = bitable._headers()
+        all_ids = []
+        page_token = ""
+        for _ in range(20):
+            params = {"page_size": 500}
+            if page_token:
+                params["page_token"] = page_token
+            resp = httpx.get(
+                f"{FEISHU_BASE}/bitable/v1/apps/{bitable.app_token}/tables/{bitable.table_id}/records",
+                headers=headers, params=params,
+            )
+            data = resp.json()
+            for r in data.get("data", {}).get("items", []):
+                fetch_date = r.get("fields", {}).get("抓取日期", 0)
+                if fetch_date and fetch_date < cutoff:
+                    all_ids.append(r["record_id"])
+            page_token = data.get("data", {}).get("page_token", "")
+            if not data.get("data", {}).get("has_more"):
+                break
+
+        if all_ids:
+            for i in range(0, len(all_ids), 500):
+                batch = all_ids[i:i + 500]
+                httpx.post(
+                    f"{FEISHU_BASE}/bitable/v1/apps/{bitable.app_token}/tables/{bitable.table_id}/records/batch_delete",
+                    headers=headers, json={"records": batch},
+                )
+            print(f"  [✓] 已清理 {len(all_ids)} 条{days}天前的旧记录")
+    except Exception as e:
+        print(f"  [!] 清理旧记录失败: {e}")
+
+
 def push_to_feishu(config: dict, account_name: str, videos: list[dict]):
     """将视频列表推送到飞书多维表格"""
     feishu = config.get("feishu", {})

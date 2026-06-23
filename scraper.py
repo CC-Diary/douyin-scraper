@@ -313,7 +313,8 @@ def main():
     if feishu_config.get("app_id"):
         print(f"\n[3/4] 推送到飞书多维表格...")
         try:
-            from feishu import push_to_feishu
+            from feishu import push_to_feishu, clean_old_records
+            clean_old_records(config, days=3)
             for name, videos in all_results.items():
                 if videos:
                     push_to_feishu(config, name, videos)
