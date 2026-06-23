@@ -20,6 +20,16 @@ from pathlib import Path
 
 import httpx
 
+# 繁体转简体
+try:
+    from opencc import OpenCC
+    _cc = OpenCC("t2s")
+    def t2s(text: str) -> str:
+        return _cc.convert(text)
+except ImportError:
+    def t2s(text: str) -> str:
+        return text
+
 BASE_DIR = Path(__file__).parent
 CONFIG_FILE = BASE_DIR / "config.json"
 OUTPUT_DIR = BASE_DIR / "output"
@@ -90,7 +100,7 @@ def transcribe_video(client: httpx.Client, video_url: str) -> str:
         # Whisper 转录
         model = load_whisper()
         result = model.transcribe(tmp_audio, language="zh")
-        return result["text"].strip()
+        return t2s(result["text"].strip())
     except Exception as e:
         return f"[转录失败: {e}]"
     finally:
