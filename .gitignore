@@ -1,0 +1,19 @@
+# 敏感配置（Cookie、飞书密钥）
+config.json
+
+# 输出数据
+output/
+logs/
+
+# Whisper 模型缓存
+*.pt
+models/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# macOS
+.DS_Store

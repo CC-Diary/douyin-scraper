@@ -1,0 +1,6 @@
+# 依赖
+httpx
+beautifulsoup4
+openai-whisper
+
+# 飞书对接已在代码中，无需额外依赖

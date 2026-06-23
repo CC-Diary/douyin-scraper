@@ -1,0 +1,17 @@
+{
+  "accounts": [
+    {
+      "name": "博主名称",
+      "douyin_url": "https://www.douyin.com/user/SEC_UID",
+      "note": "备注"
+    }
+  ],
+  "feishu": {
+    "app_id": "",
+    "app_secret": "",
+    "app_token": "",
+    "table_id": ""
+  },
+  "cookie": "",
+  "output_dir": "./output"
+}
