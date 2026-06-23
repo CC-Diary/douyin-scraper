@@ -13,6 +13,8 @@
 
 ### 1. 安装依赖
 
+**Windows 额外要求：** 需要先安装 [Python](https://python.org)、[FFmpeg](https://ffmpeg.org/download.html)（加入系统 PATH）。
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -42,10 +44,16 @@ python scraper.py
 python scraper.py --transcribe
 ```
 
-### 4. 定时自动运行（macOS）
+### 4. 定时自动运行
 
+**macOS:**
 ```bash
 bash setup-auto.sh 9 0   # 每天早上9点
+```
+
+**Windows:**
+```bash
+setup-auto.bat 9 0        # 每天早上9点（以管理员身份运行）
 ```
 
 ## 获取抖音 Cookie
